@@ -1,3 +1,4 @@
+import logging
 from enum import Enum
 
 from homeassistant.const import (
@@ -10,6 +11,7 @@ from homeassistant.const import (
     Platform,
 )
 
+LOGGER = logging.getLogger(__name__)
 # configuration names
 CONF_BAUDRATE = "baudrate"
 CONF_BYTESIZE = "bytesize"
