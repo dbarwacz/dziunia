@@ -1,5 +1,6 @@
 import json
 import logging
+from typing import Any
 
 import requests
 from homeassistant.core import HomeAssistant
@@ -11,8 +12,6 @@ from .device_types.devices import get_enum_from_version_and_sensor_count
 
 _LOGGER = logging.getLogger(__name__)
 
-import asyncio
-from typing import TYPE_CHECKING, Any
 
 import usb
 
@@ -49,6 +48,7 @@ def print_message(msg: can.Message) -> None:
 
 
 class AsyncCANClient:
+    """Docs"""
     def __init__(
             self,
             # vendorId: int,
