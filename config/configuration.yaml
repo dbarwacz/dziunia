@@ -4,8 +4,15 @@ default_config:
 http:
   server_port: 1234
 
-dziunia:
-  sensor:
+modbus:
+  - name: dziunia_hub
+    type: tcp
+    host: localhost
+    port: 502
+
+    delay: 0
+    message_wait_milliseconds: 30
+    timeout: 5
 
 # https://www.home-assistant.io/integrations/logger/
 logger:
