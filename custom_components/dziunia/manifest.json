@@ -19,5 +19,5 @@
     "libusb-package==1.0.26.1",
     "cantools==39.4.5"
   ],
-  "version": "0.1.8"
+  "version": "0.0.3"
 }
