@@ -13,6 +13,10 @@ from homeassistant.const import (
 )
 
 LOGGER = logging.getLogger(__name__)
+
+CURRENT = "Current"
+VOLTAGE = "Voltage"
+
 # configuration names
 CONF_BAUDRATE = "baudrate"
 CONF_BYTESIZE = "bytesize"
@@ -89,7 +93,6 @@ SERIAL = "serial"
 TCP = "tcp"
 UDP = "udp"
 
-
 # service call attributes
 ATTR_ADDRESS = CONF_ADDRESS
 ATTR_HUB = "hub"
@@ -143,6 +146,8 @@ DEFAULT_SLAVE = 1
 DEFAULT_STRUCTURE_PREFIX = ">f"
 DEFAULT_TEMP_UNIT = "C"
 MODBUS_DOMAIN = "dziunia"
+
+TIMESTAMP = "timestamp"
 
 ACTIVE_SCAN_INTERVAL = 2  # limit to force an extra update
 

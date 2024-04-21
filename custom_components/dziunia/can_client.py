@@ -68,10 +68,10 @@ class AsyncCANClient:
             bitrate=125000,
             receive_own_messages=True
         )
-        self.reader = can.AsyncBufferedReader()
-        self.logger = can.Logger("logfile.asc")
+        # self.reader = can.AsyncBufferedReader()
+        # self.logger = can.Logger("logfile.asc")
 
-        self.listeners: list[print_message, self.reader, self.logger]
+        self.listeners: list[print_message, can.AsyncBufferedReader(), can.Logger("logfile.asc")]
         # if PYSERIAL_MISSING:
         #     raise RuntimeError(
         #         "Serial client requires usblib "
