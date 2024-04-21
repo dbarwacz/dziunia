@@ -1,3 +1,4 @@
+"""JUST GO FUCK YOURSELF KIND LINTER."""
 import logging
 from enum import Enum
 

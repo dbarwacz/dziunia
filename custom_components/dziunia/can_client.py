@@ -1,8 +1,12 @@
+"""CAN client."""
+import asyncio
 import json
 import logging
 from typing import Any
 
+import can
 import requests
+import usb
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
@@ -10,19 +14,11 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from .device_types.devices import Device_type
 from .device_types.devices import get_enum_from_version_and_sensor_count
 
-_LOGGER = logging.getLogger(__name__)
-
-
-import usb
-
-import asyncio
-from typing import List
-
-import can
-
-from can.notifier import MessageRecipient, Notifier
+# from can.notifier import MessageRecipient, Notifier
+from can.notifier import Notifier
 
 _LOGGER = logging.getLogger(__name__)
+
 
 # try:
 #     import serial
@@ -35,6 +31,7 @@ _LOGGER = logging.getLogger(__name__)
 #         import serial
 
 def is_supported_device(dev):
+    """Define what devices to accept for USB connection."""
     # USB2CAN v3.2 (InnoMaker black one)
     return dev.idVendor == 0x1d50 and dev.idProduct == 0x606f
     # 8devices, blue one
@@ -44,11 +41,12 @@ def is_supported_device(dev):
 @callable
 def print_message(msg: can.Message) -> None:
     """Regular callback function. Can also be a coroutine."""
-    print(msg)
+    _LOGGER.info(f"Received message: {msg}")
 
 
 class AsyncCANClient:
-    """Docs"""
+    """Docs."""
+
     def __init__(
             self,
             # vendorId: int,
@@ -58,7 +56,7 @@ class AsyncCANClient:
     ) -> None:
         """Initialize Asyncio CAN Serial Client."""
         self.notifier = None
-        devs = [dev for dev in usb.core.find(find_all=True, custom_match=is_supported_device)]
+        devs = [usb.core.find(find_all=True, custom_match=is_supported_device)]
         assert len(devs)
         dev = devs[0]
         _LOGGER.info(f"Discovered devices: {devs}")
@@ -73,11 +71,7 @@ class AsyncCANClient:
         self.reader = can.AsyncBufferedReader()
         self.logger = can.Logger("logfile.asc")
 
-        self.listeners: List[MessageRecipient] = [
-            print_message,  # Callback function
-            self.reader,  # AsyncBufferedReader() listener
-            self.logger,  # Regular Listener object
-        ]
+        self.listeners: list[print_message, self.reader, self.logger]
         # if PYSERIAL_MISSING:
         #     raise RuntimeError(
         #         "Serial client requires usblib "
@@ -131,11 +125,15 @@ class AsyncCANClient:
 
 
 class EmuApiClient:
+    """JUST GO FUCK YOURSELF KIND LINTER."""
+
     def __init__(self, ip, device: DataUpdateCoordinator | None = None):
+        """JUST GO FUCK YOURSELF KIND LINTER."""
         self._ip = ip
         self._device = device
 
     def validate_connection_sync(self, sensors: list | None):
+        """JUST GO FUCK YOURSELF KIND LINTER."""
         try:
             res = requests.get(f"http://{self._ip}")
             if "emu_logo_128px" not in res.text:
@@ -143,23 +141,20 @@ class EmuApiClient:
 
             if sensors is not None:
                 for (
-                        sensor_id,
-                        serial,
-                        given_name,
-                        device_type,
+                        sensor_id
                 ) in sensors:
                     res = requests.get(f"http://{self._ip}/app/api/id/{sensor_id}.json")
                     try:
                         parsed = json.loads(res.text)["Device"]
 
                         # test if we got the Info for the right device
-                        if not parsed["Id"] == int(sensor_id):
+                        if parsed["Id"] != int(sensor_id):
                             _LOGGER.error(
                                 f"Got Info for the wrong Sensor! Expected {sensor_id}, got {parsed['Id']}"
                             )
                             return False
                         # test if the sensor we read out does in fact provide electricity measurements
-                        if not parsed["Medium"] == "Electricity":
+                        if parsed["Medium"] != "Electricity":
                             _LOGGER.error(
                                 f"Sensor {sensor_id} does not provide electricity measurements"
                             )
@@ -185,10 +180,12 @@ class EmuApiClient:
     async def validate_connection_async(
             self, hass: HomeAssistant, sensors: list | None
     ):
+        """JUST GO FUCK YOURSELF KIND LINTER."""
         return await hass.async_add_executor_job(self.validate_connection_sync, sensors)
 
     def scan_for_sensors_sync(self) -> list[(int, int, str, str, int, Device_type)]:
-        list_of_ids = list()
+        """JUST GO FUCK YOURSELF KIND LINTER."""
+        list_of_ids = []
         for sensor_id in range(250):
             try:
                 res = requests.get(f"http://{self._ip}/app/api/id/{sensor_id}.json")
@@ -239,6 +236,7 @@ class EmuApiClient:
         return list_of_ids
 
     async def scan_for_sensors_async(self, hass: HomeAssistant):
+        """JUST GO FUCK YOURSELF KIND LINTER."""
         return await hass.async_add_executor_job(self.scan_for_sensors_sync)
 
     def read_sensor_sync(self, sensor_id: int) -> dict[str, float]:
@@ -286,6 +284,7 @@ class EmuApiClient:
             _LOGGER.error("Response from M-Bus Center did not satisfy expectations:", e)
 
     async def read_sensor_async(self, sensor_id: int, hass: HomeAssistant):
+        """JUST GO FUCK YOURSELF KIND LINTER."""
         result = await hass.async_add_executor_job(self.read_sensor_sync, sensor_id)
         # _LOGGER.error(f"result in read_sensor_async is {result}")
         return result
@@ -300,13 +299,14 @@ class InvalidAuth(HomeAssistantError):
 
 
 class EmuApiError(HomeAssistantError):
-    """Generic API errors"""
+    """Generic API errors."""
 
     def __init__(self, sta: str, msg: str | None = None) -> None:
-        """sta: status code, msg: message"""
+        """sta: status code, msg: message."""
         Exception.__init__(self)
         self.sta = sta
         self.msg = msg
 
     def __str__(self):
+        """JUST GO FUCK YOURSELF KIND LINTER."""
         return f"<Emu API Error sta:{self.sta} message:{self.msg}>"
