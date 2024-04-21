@@ -4,7 +4,7 @@ default_config:
 http:
   server_port: 1234
 
-modbus:
+dziunia:
   - name: dziunia_hub
     type: tcp
     host: localhost
